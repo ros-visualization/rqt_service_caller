@@ -31,17 +31,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import division
-import os, sys
+import os
 import math, random, time # used for the expression eval context
 
-from qt_gui.QtBindingHelper import loadUi
+from qt_gui.qt_binding_helper import loadUi
 from QtCore import Qt, QTimer, QSignalMapper, Slot, qDebug, qWarning
 from QtGui import QIcon, QMenu, QTreeWidgetItem, QWidget
 
 import roslib
 roslib.load_manifest('rqt_service_caller')
 import rospy, rosservice
-from rqt_py_common.ExtendedComboBox import ExtendedComboBox
+from rqt_py_common.extended_combo_box import ExtendedComboBox
 
 # main class inherits from the ui window class
 class ServiceCaller(QWidget):
