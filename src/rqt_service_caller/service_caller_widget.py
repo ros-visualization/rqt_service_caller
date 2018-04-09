@@ -80,9 +80,16 @@ class ServiceCallerWidget(QWidget):
         self.request_tree_widget.itemChanged.connect(self.request_tree_widget_itemChanged)
 
     def save_settings(self, plugin_settings, instance_settings):
+        instance_settings.set_value('current_service_name', self._service_info['service_name'])
         instance_settings.set_value('splitter_orientation', self.splitter.orientation())
 
     def restore_settings(self, plugin_settings, instance_settings):
+        current_service_name = instance_settings.value('current_service_name', None)
+        if current_service_name:
+          current_service_index = self.service_combo_box.findData(current_service_name, Qt.DisplayRole)
+          if current_service_index != -1:
+            self.service_combo_box.setCurrentIndex(current_service_index);
+
         if int(instance_settings.value('splitter_orientation', Qt.Vertical)) == int(Qt.Vertical):
             self.splitter.setOrientation(Qt.Vertical)
         else:
