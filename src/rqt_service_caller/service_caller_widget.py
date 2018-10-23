@@ -86,9 +86,10 @@ class ServiceCallerWidget(QWidget):
     def restore_settings(self, plugin_settings, instance_settings):
         current_service_name = instance_settings.value('current_service_name', None)
         if current_service_name:
-          current_service_index = self.service_combo_box.findData(current_service_name, Qt.DisplayRole)
-          if current_service_index != -1:
-            self.service_combo_box.setCurrentIndex(current_service_index);
+            current_service_index = self.service_combo_box.findData(
+                current_service_name, Qt.DisplayRole)
+            if current_service_index != -1:
+                self.service_combo_box.setCurrentIndex(current_service_index)
 
         if int(instance_settings.value('splitter_orientation', Qt.Vertical)) == int(Qt.Vertical):
             self.splitter.setOrientation(Qt.Vertical)
@@ -96,7 +97,8 @@ class ServiceCallerWidget(QWidget):
             self.splitter.setOrientation(Qt.Horizontal)
 
     def trigger_configuration(self):
-        new_orientation = Qt.Vertical if self.splitter.orientation() == Qt.Horizontal else Qt.Horizontal
+        new_orientation = \
+            Qt.Vertical if self.splitter.orientation() == Qt.Horizontal else Qt.Horizontal
         self.splitter.setOrientation(new_orientation)
 
     @Slot()
@@ -106,11 +108,17 @@ class ServiceCallerWidget(QWidget):
         for service_name in service_names:
             try:
                 self._services[service_name] = rosservice.get_service_class_by_name(service_name)
-                #qDebug('ServiceCaller.on_refresh_services_button_clicked(): found service %s using class %s' % (service_name, self._services[service_name]))
+                # qDebug('ServiceCaller.on_refresh_services_button_clicked(): found
+                # service %s using class %s' % (service_name,
+                # self._services[service_name]))
             except (rosservice.ROSServiceException, rosservice.ROSServiceIOException) as e:
-                qWarning('ServiceCaller.on_refresh_services_button_clicked(): could not get class of service %s:\n%s' % (service_name, e))
+                qWarning(
+                    'ServiceCaller.on_refresh_services_button_clicked(): could not get class of service %s:\n%s' %
+                    (service_name, e))
             except Exception as e:
-                qWarning('ServiceCaller.on_refresh_services_button_clicked(): failed to load class of service %s:\n%s' % (service_name, e))
+                qWarning(
+                    'ServiceCaller.on_refresh_services_button_clicked(): failed to load class of service %s:\n%s' %
+                    (service_name, e))
 
         self.service_combo_box.clear()
         self.service_combo_box.addItems(sorted(self._services.keys()))
@@ -126,13 +134,15 @@ class ServiceCallerWidget(QWidget):
         self._service_info = {}
         self._service_info['service_name'] = service_name
         self._service_info['service_class'] = self._services[service_name]
-        self._service_info['service_proxy'] = rospy.ServiceProxy(service_name, self._service_info['service_class'])
+        self._service_info['service_proxy'] = rospy.ServiceProxy(
+            service_name, self._service_info['service_class'])
         self._service_info['expressions'] = {}
         self._service_info['counter'] = 0
 
         # recursively create widget items for the service request's slots
         request_class = self._service_info['service_class']._request_class
-        top_level_item = self._recursive_create_widget_items(None, service_name, request_class._type, request_class())
+        top_level_item = self._recursive_create_widget_items(
+            None, service_name, request_class._type, request_class())
 
         # add top level item to tree widget
         self.request_tree_widget.addTopLevelItem(top_level_item)
@@ -162,12 +172,14 @@ class ServiceCallerWidget(QWidget):
 
         if hasattr(message, '__slots__') and hasattr(message, '_slot_types'):
             for slot_name, type_name in zip(message.__slots__, message._slot_types):
-                self._recursive_create_widget_items(item, topic_name + '/' + slot_name, type_name, getattr(message, slot_name), is_editable)
+                self._recursive_create_widget_items(item, topic_name + '/' + slot_name,
+                                                    type_name, getattr(message, slot_name), is_editable)
 
         elif type(message) in (list, tuple) and (len(message) > 0) and hasattr(message[0], '__slots__'):
             type_name = type_name.split('[', 1)[0]
             for index, slot in enumerate(message):
-                self._recursive_create_widget_items(item, topic_name + '[%d]' % index, type_name, slot, is_editable)
+                self._recursive_create_widget_items(
+                    item, topic_name + '[%d]' % index, type_name, slot, is_editable)
 
         else:
             item.setText(self._column_index['expression'], repr(message))
@@ -178,12 +190,16 @@ class ServiceCallerWidget(QWidget):
     def request_tree_widget_itemChanged(self, item, column):
         column_name = self.column_names[column]
         new_value = str(item.text(column))
-        #qDebug('ServiceCaller.request_tree_widget_itemChanged(): %s : %s' % (column_name, new_value))
+        # qDebug(
+        #   'ServiceCaller.request_tree_widget_itemChanged(): %s : %s' %
+        #   (column_name, new_value))
 
         if column_name == 'expression':
             topic_name = str(item.data(0, Qt.UserRole))
             self._service_info['expressions'][topic_name] = new_value
-            #qDebug('ServiceCaller.request_tree_widget_itemChanged(): %s expression: %s' % (topic_name, new_value))
+            # qDebug(
+            #   'ServiceCaller.request_tree_widget_itemChanged(): %s expression: %s' %
+            #   (topic_name, new_value))
 
     def fill_message_slots(self, message, topic_name, expressions, counter):
         if not hasattr(message, '__slots__'):
@@ -233,9 +249,12 @@ class ServiceCallerWidget(QWidget):
         if successful_conversion:
             return value
         elif successful_eval:
-            qWarning('ServiceCaller.fill_message_slots(): can not convert expression to slot type: %s -> %s' % (type(value), slot_type))
+            qWarning(
+                'ServiceCaller.fill_message_slots(): can not convert expression to slot type: %s -> %s' %
+                (type(value), slot_type))
         else:
-            qWarning('ServiceCaller.fill_message_slots(): failed to evaluate expression: %s' % (expression))
+            qWarning('ServiceCaller.fill_message_slots(): failed to evaluate expression: %s' %
+                     (expression))
 
         return None
 
@@ -244,19 +263,22 @@ class ServiceCallerWidget(QWidget):
         self.response_tree_widget.clear()
 
         request = self._service_info['service_class']._request_class()
-        self.fill_message_slots(request, self._service_info['service_name'], self._service_info['expressions'], self._service_info['counter'])
+        self.fill_message_slots(request, self._service_info['service_name'],
+                                self._service_info['expressions'], self._service_info['counter'])
         try:
             response = self._service_info['service_proxy'](request)
         except rospy.ServiceException as e:
             qWarning('ServiceCaller.on_call_service_button_clicked(): request:\n%r' % (request))
-            qWarning('ServiceCaller.on_call_service_button_clicked(): error calling service "%s":\n%s' % (self._service_info['service_name'], e))
+            qWarning('ServiceCaller.on_call_service_button_clicked(): error calling service "%s":\n%s' %
+                     (self._service_info['service_name'], e))
             top_level_item = QTreeWidgetItem()
             top_level_item.setText(self._column_index['service'], 'ERROR')
             top_level_item.setText(self._column_index['type'], 'rospy.ServiceException')
             top_level_item.setText(self._column_index['expression'], str(e))
         else:
-            #qDebug('ServiceCaller.on_call_service_button_clicked(): response: %r' % (response))
-            top_level_item = self._recursive_create_widget_items(None, '/', response._type, response, is_editable=False)
+            # qDebug('ServiceCaller.on_call_service_button_clicked(): response: %r' % (response))
+            top_level_item = self._recursive_create_widget_items(
+                None, '/', response._type, response, is_editable=False)
 
         self.response_tree_widget.addTopLevelItem(top_level_item)
         # resize columns
@@ -266,11 +288,13 @@ class ServiceCallerWidget(QWidget):
 
     @Slot('QPoint')
     def on_request_tree_widget_customContextMenuRequested(self, pos):
-        self._show_context_menu(self.request_tree_widget.itemAt(pos), self.request_tree_widget.mapToGlobal(pos))
+        self._show_context_menu(
+            self.request_tree_widget.itemAt(pos), self.request_tree_widget.mapToGlobal(pos))
 
     @Slot('QPoint')
     def on_response_tree_widget_customContextMenuRequested(self, pos):
-        self._show_context_menu(self.response_tree_widget.itemAt(pos), self.response_tree_widget.mapToGlobal(pos))
+        self._show_context_menu(
+            self.response_tree_widget.itemAt(pos), self.response_tree_widget.mapToGlobal(pos))
 
     def _show_context_menu(self, item, global_pos):
         if item is None:
@@ -291,4 +315,3 @@ class ServiceCallerWidget(QWidget):
                 for index in range(item.childCount()):
                     recursive_set_expanded(item.child(index))
             recursive_set_expanded(item)
-
