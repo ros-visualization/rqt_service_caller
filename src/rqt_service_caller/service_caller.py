@@ -31,16 +31,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from rqt_gui_py.plugin import Plugin
-from .service_caller_widget import ServiceCallerWidget
+from rqt_service_caller.service_caller_widget import ServiceCallerWidget
 
 
 class ServiceCaller(Plugin):
 
     def __init__(self, context):
         super(ServiceCaller, self).__init__(context)
+        print('ServiceCaller')
         self.setObjectName('ServiceCaller')
 
-        self._widget = ServiceCallerWidget()
+        if not hasattr(context, 'node'):
+            print('Context does not have a node')
+        self._widget = ServiceCallerWidget(context.node)
         if context.serial_number() > 1:
             self._widget.setWindowTitle(
                 self._widget.windowTitle() + (' (%d)' % context.serial_number()))
