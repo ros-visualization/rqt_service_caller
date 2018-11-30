@@ -38,7 +38,6 @@ class ServiceCaller(Plugin):
 
     def __init__(self, context):
         super(ServiceCaller, self).__init__(context)
-        print('ServiceCaller')
         self.setObjectName('ServiceCaller')
 
         if not hasattr(context, 'node'):

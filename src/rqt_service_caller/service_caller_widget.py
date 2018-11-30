@@ -39,6 +39,8 @@ import time
 
 from ament_index_python.resources import get_resource
 
+import importlib
+
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt, Slot, qWarning
 from python_qt_binding.QtGui import QIcon
@@ -59,10 +61,9 @@ class ServiceCallerWidget(QWidget):
         self._node = node
 
         # create context for the expression eval statement
-        self._eval_locals = {}
+        self._eval_locals = {'i': 0}
         for module in (math, random, time):
             self._eval_locals.update(module.__dict__)
-        # self._eval_locals['genpy'] = genpy
         del self._eval_locals['__name__']
         del self._eval_locals['__doc__']
 
@@ -111,7 +112,6 @@ class ServiceCallerWidget(QWidget):
     @Slot()
     def on_refresh_services_button_clicked(self):
         service_names_and_types = self._node.get_service_names_and_types()
-        print(service_names_and_types)
         self._services = {}
         for service_name, service_types in service_names_and_types:
             if len(service_types) > 1:
@@ -150,13 +150,22 @@ class ServiceCallerWidget(QWidget):
         self._service_info = {}
         self._service_info['service_name'] = service_name
         self._service_info['service_class_name'] = self._services[service_name]
-        service_class = get_service_class(self._services[service_name])
+
+        try:
+            package_name, service_class_name = self._services[service_name].split('/', 2)
+            if not package_name or not service_class_name:
+                raise ValueError()
+        except ValueError:
+            raise RuntimeError(
+                'The passed message type "{}" is invalid'.format(self._services[service_name]))
+
+        # self._eval_locals[package_name] = importlib.import_module(package_name)
+
+        service_class = get_service_class(self._service_info['service_class_name'])
         assert service_class, 'Could not find class {} for service: {}'.format(
             self._services[service_name], service_name)
 
         self._service_info['service_class'] = service_class
-        # self._service_info['service_proxy'] = rospy.ServiceProxy(
-        #     service_name, self._service_info['service_class'])
         self._service_info['expressions'] = {}
         self._service_info['counter'] = 0
 
@@ -225,7 +234,6 @@ class ServiceCallerWidget(QWidget):
             #   (topic_name, new_value))
 
     def fill_message_slots(self, message, topic_name, expressions, counter):
-
         if not hasattr(message, 'get_fields_and_field_types'):
             qWarning(
                 'Message: {} does\'t have attribute get_fields_and_field_types'.format(
@@ -237,7 +245,8 @@ class ServiceCallerWidget(QWidget):
 
             # if no expression exists for this slot_key, continue with it's child slots
             if slot_key not in expressions:
-                self.fill_message_slots(getattr(message, slot_name), slot_key, expressions, counter)
+                self.fill_message_slots(
+                    getattr(message, slot_name), slot_key, expressions, counter)
                 continue
 
             expression = expressions[slot_key]
@@ -271,7 +280,8 @@ class ServiceCallerWidget(QWidget):
             return value
         elif successful_eval:
             qWarning(
-                'ServiceCaller.fill_message_slots(): can not convert expression to slot type: %s -> %s' %
+                'ServiceCaller.fill_message_slots(): '
+                'can not convert expression to slot type: %s -> %s' %
                 (type(value), slot_type))
         else:
             qWarning('ServiceCaller.fill_message_slots(): failed to evaluate expression: %s' %
