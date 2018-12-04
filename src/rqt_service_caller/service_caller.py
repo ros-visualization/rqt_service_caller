@@ -40,8 +40,7 @@ class ServiceCaller(Plugin):
         super(ServiceCaller, self).__init__(context)
         self.setObjectName('ServiceCaller')
 
-        if not hasattr(context, 'node'):
-            print('Context does not have a node')
+        assert hasattr(context, 'node'), 'Context does not have a node.'
         self._widget = ServiceCallerWidget(context.node)
         if context.serial_number() > 1:
             self._widget.setWindowTitle(

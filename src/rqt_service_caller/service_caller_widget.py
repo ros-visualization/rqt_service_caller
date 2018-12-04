@@ -49,8 +49,8 @@ from python_qt_binding.QtWidgets import QMenu, QTreeWidgetItem, QWidget
 import rclpy
 
 from rqt_py_common.extended_combo_box import ExtendedComboBox
-from rqt_py_common.message_helpers import get_service_class
-
+from rqt_py_common.message_helpers import get_service_class, get_message_class
+from rqt_py_common.topic_helpers import is_primitive_type, get_type_class
 
 class ServiceCallerWidget(QWidget):
     column_names = ['service', 'type', 'expression']
@@ -61,14 +61,13 @@ class ServiceCallerWidget(QWidget):
         self._node = node
 
         # create context for the expression eval statement
-        self._eval_locals = {'i': 0}
+        self._eval_locals = {}
         for module in (math, random, time):
             self._eval_locals.update(module.__dict__)
         del self._eval_locals['__name__']
         del self._eval_locals['__doc__']
 
         pkg_name = 'rqt_service_caller'
-
         _, package_path = get_resource('packages', pkg_name)
         ui_file = os.path.join(
             package_path, 'share', pkg_name, 'resource', 'ServiceCaller.ui')
@@ -132,10 +131,6 @@ class ServiceCallerWidget(QWidget):
             else:
                 self._services[service_name] = service_types[0]
 
-            # qDebug('ServiceCaller.on_refresh_services_button_clicked(): found
-            # service %s using class %s' % (service_name,
-            # self._services[service_name]))
-
         self.service_combo_box.clear()
         self.service_combo_box.addItems(sorted(self._services.keys()))
 
@@ -158,8 +153,6 @@ class ServiceCallerWidget(QWidget):
         except ValueError:
             raise RuntimeError(
                 'The passed message type "{}" is invalid'.format(self._services[service_name]))
-
-        # self._eval_locals[package_name] = importlib.import_module(package_name)
 
         service_class = get_service_class(self._service_info['service_class_name'])
         assert service_class, 'Could not find class {} for service: {}'.format(
@@ -235,9 +228,6 @@ class ServiceCallerWidget(QWidget):
 
     def fill_message_slots(self, message, topic_name, expressions, counter):
         if not hasattr(message, 'get_fields_and_field_types'):
-            qWarning(
-                'Message: {} does\'t have attribute get_fields_and_field_types'.format(
-                    type(message)))
             return
 
         for slot_name, slot_type in message.get_fields_and_field_types().items():
@@ -254,13 +244,36 @@ class ServiceCallerWidget(QWidget):
                 continue
 
             self._eval_locals['i'] = counter
-            value = self._evaluate_expression(expression, slot_type)
+            slot_type_class = None
+            if is_primitive_type(slot_type):
+                slot_type_class = get_type_class(slot_type)
+            else:
+                slot_type_class = get_message_class(slot_type)
+            value = self._evaluate_expression(expression, slot_type_class)
             if value is not None:
                 setattr(message, slot_name, value)
+
+    def _process_msg_expression(self, expression):
+        """
+        Checks if expression matches the format <package_name>.msg.<str2>
+
+        If expression matches that format then we attempt to import <package_name>
+        and store it in self._eval_locals[<package_name>] for use with eval.
+        """
+        tokens = expression.split('.', 2)
+        if len(tokens) == 3 and tokens[1] == 'msg':
+            try:
+                module = importlib.import_module(tokens[0])
+                self._eval_locals[tokens[0]] = module
+            except ModuleNotFoundError:
+                qWarning(
+                    'ServiceCallerWidget._process_msg_expression failed to import: {}.'.format(
+                        tokens[0] + '.msg'))
 
     def _evaluate_expression(self, expression, slot_type):
         successful_eval = True
         successful_conversion = True
+        self._process_msg_expression(expression)
 
         try:
             # try to evaluate expression
@@ -270,14 +283,16 @@ class ServiceCallerWidget(QWidget):
             value = expression
             successful_eval = False
 
-        try:
-            # try to convert value to right type
-            value = slot_type(value)
-        except Exception:
-            successful_conversion = False
+        if type(value) != slot_type:
+            try:
+                # try to convert value to right type
+                value = slot_type(value)
+            except Exception:
+                successful_conversion = False
 
         if successful_conversion:
             return value
+
         elif successful_eval:
             qWarning(
                 'ServiceCaller.fill_message_slots(): '
