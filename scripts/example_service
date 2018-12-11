@@ -22,29 +22,22 @@ import rclpy
 
 from rclpy.node import Node
 
-from rqt_service_caller.srv import Distance
+from rqt_service_caller.srv import Sum
 
 
-class DistanceServer(Node):
+class SumServer(Node):
 
     def __init__(self):
-        super().__init__('add_two_ints_server')
-        self.srv = self.create_service(Distance, 'Distance', self.distance_callback)
+        super().__init__('compute_sum_server')
+        self.srv = self.create_service(Sum, 'compute_sum', self.sum_callback)
 
-    def distance_callback(self, request, response):
-        response.distance = math.sqrt(
-            math.pow(request.point1.x - request.point2.x, 2) +
-            math.pow(request.point1.y - request.point2.y, 2) +
-            math.pow(request.point1.z - request.point2.z, 2))
-        self.get_logger().info(
-            'Incoming request\n '
-            '\tpoint1.x: %3.f \tpoint2.x: %3.f\n'
-            '\tpoint1.y: %3.f \tpoint2.y: %3.f\n'
-            '\tpoint1.z: %3.f \tpoint2.z: %3.f\n'
-            % (
-                request.point1.x, request.point2.x,
-                request.point1.y, request.point2.y,
-                request.point1.z, request.point2.z))
+    def sum_callback(self, request, response):
+        self.get_logger().info('incoming request:')
+        response.total = 0.0
+        for ix, val in enumerate(request.val.vals):
+            for jx, float_ in enumerate(val.floats):
+                self.get_logger().info('\trequest.vals[{}].floats[{}] = {}'.format(ix, jx, float_))
+                response.total += float_
 
         return response
 
@@ -52,7 +45,7 @@ class DistanceServer(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = DistanceServer()
+    node = SumServer()
 
     rclpy.spin(node)
 

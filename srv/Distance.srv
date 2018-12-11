@@ -1,4 +1,0 @@
-geometry_msgs/Point32 point1
-geometry_msgs/Point32 point2
----
-float64 distance

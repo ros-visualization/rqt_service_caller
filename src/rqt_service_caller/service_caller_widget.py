@@ -324,7 +324,9 @@ class ServiceCallerWidget(QWidget):
                     self._service_info['service_class']))
 
         future = cli.call_async(request)
-        rclpy.spin_until_future_complete(self._node, future)
+        while rclpy.ok() and not future.done():
+            pass
+
         if future.result() is not None:
             response = future.result()
             top_level_item = self._recursive_create_widget_items(
