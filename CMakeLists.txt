@@ -3,7 +3,6 @@ project(rqt_service_caller)
 
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
-find_package(rqt_py_common REQUIRED)
 
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR src/${PROJECT_NAME})
@@ -19,7 +18,5 @@ install(DIRECTORY resource
 install(PROGRAMS scripts/rqt_service_caller
   DESTINATION lib/${PROJECT_NAME}
 )
-
-ament_export_dependencies(rqt_py_common)
 
 ament_package()
