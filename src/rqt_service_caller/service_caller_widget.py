@@ -221,37 +221,70 @@ class ServiceCallerWidget(QWidget):
 
         if column_name == 'expression':
             topic_name = str(item.data(0, Qt.UserRole))
-            self._service_info['expressions'][topic_name] = new_value
+            if len(new_value):
+                self._service_info['expressions'][topic_name] = new_value
+            elif topic_name in self._service_info['expressions']:
+                self._service_info['expressions'].pop(topic_name)
+
             # qDebug(
             #   'ServiceCaller.request_tree_widget_itemChanged(): %s expression: %s' %
             #   (topic_name, new_value))
 
     def fill_message_slots(self, message, topic_name, expressions, counter):
-        if not hasattr(message, 'get_fields_and_field_types'):
-            return
+        # qDebug(
+        #     'fill_message_slots('
+        #     '\n\tmessage={}, \n\ttopic_name={}, \n\texpressions={}, \n\tcounter={})'.format(
+        #         message, topic_name, expressions, counter))
+        if type(message) in (list, set):
+            for i, msg in enumerate(message):
+                slot_key = topic_name + '[{}]'.format(i)
+                if slot_key not in expressions:
+                    self.fill_message_slots(msg, slot_key, expressions, counter)
+                    continue
 
-        for slot_name, slot_type in message.get_fields_and_field_types().items():
-            slot_key = topic_name + '/' + slot_name
+                expression = expressions[slot_key]
+                if len(expression) == 0:
+                    continue
 
-            # if no expression exists for this slot_key, continue with it's child slots
-            if slot_key not in expressions:
-                self.fill_message_slots(
-                    getattr(message, slot_name), slot_key, expressions, counter)
-                continue
+                self._eval_locals['i'] = counter
+                slot_type_class = type(msg)
+                is_array = False
+                if slot_type_class in (list, tuple):
+                    is_array = True
+                value = self._evaluate_expression(expression, None, is_array)
+                if value is not None:
+                    message[i] = value
 
-            expression = expressions[slot_key]
-            if len(expression) == 0:
-                continue
+        elif hasattr(message, 'get_fields_and_field_types'):
+            for slot_name, slot_type in message.get_fields_and_field_types().items():
+                slot_key = topic_name + '/' + slot_name
 
-            self._eval_locals['i'] = counter
-            slot_type_class = None
-            if is_primitive_type(slot_type):
-                slot_type_class = get_type_class(slot_type)
-            else:
-                slot_type_class = get_message_class(slot_type)
-            value = self._evaluate_expression(expression, slot_type_class)
-            if value is not None:
-                setattr(message, slot_name, value)
+                # if no expression exists for this slot_key, continue with it's child slots
+                if slot_key not in expressions:
+                    self.fill_message_slots(
+                        getattr(message, slot_name), slot_key, expressions, counter)
+                    continue
+
+                expression = expressions[slot_key]
+                if len(expression) == 0:
+                    continue
+
+                self._eval_locals['i'] = counter
+                slot_type_class = None
+
+                slot_type_no_array = slot_type.split('[', 1)[0]
+                is_array = slot_type.find('[') >= 0
+                if is_primitive_type(slot_type_no_array):
+                    slot_type_class = get_type_class(slot_type_no_array)
+                else:
+                    slot_type_class = get_message_class(slot_type_no_array)
+                value = self._evaluate_expression(expression, slot_type_class, is_array)
+                if value is not None:
+                    try:
+                        setattr(message, slot_name, value)
+                    except AssertionError as e:
+                        qWarning(
+                            'Failed to set {} to {}\n\t{}'.format(slot_name, value, e.__str__()))
 
     def _process_msg_expression(self, expression):
         """
@@ -260,7 +293,7 @@ class ServiceCallerWidget(QWidget):
         If expression matches that format then we attempt to import <package_name>
         and store it in self._eval_locals[<package_name>] for use with eval.
         """
-        tokens = expression.split('.', 2)
+        tokens = expression.lstrip('[').split('.', 2)
         if len(tokens) == 3 and tokens[1] == 'msg':
             try:
                 module = importlib.import_module(tokens[0])
@@ -270,7 +303,7 @@ class ServiceCallerWidget(QWidget):
                     'ServiceCallerWidget._process_msg_expression failed to import: {}.'.format(
                         tokens[0] + '.msg'))
 
-    def _evaluate_expression(self, expression, slot_type):
+    def _evaluate_expression(self, expression, slot_type=None, is_array=False):
         successful_eval = True
         successful_conversion = True
         self._process_msg_expression(expression)
@@ -283,23 +316,34 @@ class ServiceCallerWidget(QWidget):
             value = expression
             successful_eval = False
 
-        if type(value) != slot_type:
-            try:
-                # try to convert value to right type
-                value = slot_type(value)
-            except Exception:
-                successful_conversion = False
+        if is_array:
+            if not type(value) is list:
+                value = list(value)
+            if slot_type and len(value) > 0 and type(value[0]) is not slot_type:
+                for i, v in enumerate(value):
+                    try:
+                        # try to convert value to right type
+                        value[i] = slot_type(v)
+                    except Exception:
+                        successful_conversion = False
+        else:
+            if slot_type and type(value) != slot_type:
+                try:
+                    # try to convert value to right type
+                    value = slot_type(value)
+                except Exception:
+                    successful_conversion = False
 
         if successful_conversion:
             return value
 
         elif successful_eval:
             qWarning(
-                'ServiceCaller.fill_message_slots(): '
+                'ServiceCaller._evaluate_expression(): '
                 'can not convert expression to slot type: %s -> %s' %
                 (type(value), slot_type))
         else:
-            qWarning('ServiceCaller.fill_message_slots(): failed to evaluate expression: %s' %
+            qWarning('ServiceCaller._evaluate_expression(): failed to evaluate expression: %s' %
                      (expression))
 
         return None
@@ -312,7 +356,6 @@ class ServiceCallerWidget(QWidget):
         self.fill_message_slots(
             request, self._service_info['service_name'], self._service_info['expressions'],
             self._service_info['counter'])
-
         cli = self._node.create_client(
             self._service_info['service_class'],  self._service_info['service_name'])
 
