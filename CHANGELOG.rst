@@ -2,8 +2,8 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2018-12-12)
+------------------
 * fix CMake logic (`#8 <https://github.com/ros-visualization/rqt_service_caller/issues/8>`_)
 
 1.0.0 (2018-12-11)
