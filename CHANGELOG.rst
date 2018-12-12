@@ -2,6 +2,10 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix CMake logic (`#8 <https://github.com/ros-visualization/rqt_service_caller/issues/8>`_)
+
 1.0.0 (2018-12-11)
 ------------------
 * Set value bug fix (`#7 <https://github.com/ros-visualization/rqt_service_caller/issues/7>`_)
