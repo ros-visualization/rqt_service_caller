@@ -2,8 +2,8 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2018-12-11)
+------------------
 * Set value bug fix (`#7 <https://github.com/ros-visualization/rqt_service_caller/issues/7>`_)
 * Ros2 port (`#6 <https://github.com/ros-visualization/rqt_service_caller/issues/6>`_)
 * autopep8 (`#5 <https://github.com/ros-visualization/rqt_service_caller/issues/5>`_)
