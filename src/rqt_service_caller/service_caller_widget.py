@@ -235,7 +235,7 @@ class ServiceCallerWidget(QWidget):
         #     'fill_message_slots('
         #     '\n\tmessage={}, \n\ttopic_name={}, \n\texpressions={}, \n\tcounter={})'.format(
         #         message, topic_name, expressions, counter))
-        if type(message) in (list, set) and len(message) > 0:
+        if type(message) in (list, set):
             for i, msg in enumerate(message):
                 slot_key = topic_name + '[{}]'.format(i)
                 if slot_key not in expressions:
@@ -280,7 +280,11 @@ class ServiceCallerWidget(QWidget):
                     slot_type_class = get_message_class(slot_type_no_array)
                 value = self._evaluate_expression(expression, slot_type_class, is_array)
                 if value is not None:
-                    setattr(message, slot_name, value)
+                    try:
+                        setattr(message, slot_name, value)
+                    except AssertionError as e:
+                        qWarning(
+                            'Failed to set {} to {}\n\t{}'.format(slot_name, value, e.__str__()))
 
     def _process_msg_expression(self, expression):
         """
@@ -315,7 +319,7 @@ class ServiceCallerWidget(QWidget):
         if is_array:
             if not type(value) is list:
                 value = list(value)
-            if slot_type and len(value) >= 0 and type(value[0]) is not slot_type:
+            if slot_type and len(value) > 0 and type(value[0]) is not slot_type:
                 for i, v in enumerate(value):
                     try:
                         # try to convert value to right type
