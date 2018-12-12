@@ -2,6 +2,15 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Set value bug fix (`#7 <https://github.com/ros-visualization/rqt_service_caller/issues/7>`_)
+* Ros2 port (`#6 <https://github.com/ros-visualization/rqt_service_caller/issues/6>`_)
+* autopep8 (`#5 <https://github.com/ros-visualization/rqt_service_caller/issues/5>`_)
+* Save and restore the selected service (`#3 <https://github.com/ros-visualization/rqt_service_caller/issues/3>`_)
+  Extended the settings by adding the currently selected service
+* Contributors: Mike Lautman, Philipp
+
 0.4.8 (2017-04-24)
 ------------------
 
