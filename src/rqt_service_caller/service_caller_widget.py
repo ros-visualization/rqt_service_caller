@@ -350,6 +350,12 @@ class ServiceCallerWidget(QWidget):
 
     @Slot()
     def on_call_service_button_clicked(self):
+        current_services = dict(self._node.get_service_names_and_types())
+        if self._service_info['service_name'] not in current_services:
+            qWarning('Service "{}" is no longer available. Refresh the list of services'.format(
+                     self._service_info['service_name']))
+            return
+
         self.response_tree_widget.clear()
 
         request = self._service_info['service_class'].Request()
@@ -358,13 +364,6 @@ class ServiceCallerWidget(QWidget):
             self._service_info['counter'])
         cli = self._node.create_client(
             self._service_info['service_class'],  self._service_info['service_name'])
-
-        while not cli.wait_for_service(timeout_sec=3.0):
-            qWarning(
-                'ServiceCaller.on_call_service_button_clicked()'
-                'Service ({}, {}) not available'.format(
-                    self._service_info['service_name'],
-                    self._service_info['service_class']))
 
         future = cli.call_async(request)
         while rclpy.ok() and not future.done():
@@ -384,6 +383,8 @@ class ServiceCallerWidget(QWidget):
             top_level_item.setText(self._column_index['service'], 'ERROR')
             top_level_item.setText(self._column_index['type'], 'rospy.ServiceException')
             top_level_item.setText(self._column_index['expression'], '')
+
+        self._node.destroy_client(cli)
 
         self.response_tree_widget.addTopLevelItem(top_level_item)
         # resize columns
