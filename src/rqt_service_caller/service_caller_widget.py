@@ -146,14 +146,6 @@ class ServiceCallerWidget(QWidget):
         self._service_info['service_name'] = service_name
         self._service_info['service_class_name'] = self._services[service_name]
 
-        try:
-            package_name, service_class_name = self._services[service_name].split('/', 2)
-            if not package_name or not service_class_name:
-                raise ValueError()
-        except ValueError:
-            raise RuntimeError(
-                'The passed message type "{}" is invalid'.format(self._services[service_name]))
-
         service_class = get_service_class(self._service_info['service_class_name'])
         assert service_class, 'Could not find class {} for service: {}'.format(
             self._services[service_name], service_name)
