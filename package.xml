@@ -1,4 +1,4 @@
-<package>
+<package format="3">
   <name>rqt_service_caller</name>
   <version>0.4.8</version>
   <description>rqt_service_caller provides a GUI plugin for calling arbitrary services.</description>
@@ -15,11 +15,12 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>python-rospkg</run_depend>
-  <run_depend>rosservice</run_depend>
-  <run_depend>rqt_gui</run_depend>
-  <run_depend>rqt_gui_py</run_depend>
-  <run_depend>rqt_py_common</run_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">python-rospkg</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 3">python3-rospkg</exec_depend>
+  <exec_depend>rosservice</exec_depend>
+  <exec_depend>rqt_gui</exec_depend>
+  <exec_depend>rqt_gui_py</exec_depend>
+  <exec_depend>rqt_py_common</exec_depend>
 
   <export>
     <architecture_independent/>
