@@ -2,8 +2,8 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.9 (2020-03-11)
+------------------
 * bump CMake minimum version to avoid CMP0048 warning
 * add Python 3 conditional dependencies (`#12 <https://github.com/ros-visualization/rqt_service_caller/issues/12>`_)
 * autopep8 (`#5 <https://github.com/ros-visualization/rqt_service_caller/issues/5>`_)
