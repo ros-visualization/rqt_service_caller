@@ -28,7 +28,7 @@ setup(
         'Topic :: Software Development',
     ],
     description=(
-        'RQT plugin for monitoring ROS processes.'
+        'rqt_service_caller provides a GUI plugin for calling arbitrary services.'
     ),
     license='BSD',
     entry_points={
