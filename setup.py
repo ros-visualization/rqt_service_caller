@@ -12,7 +12,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name + '/resource',
             ['resource/ServiceCaller.ui']),
-        ('share/' + package_name + '/resource/icons/rqt_icons/actions/22/',
+        ('share/' + package_name + '/resource/icons/rqt_icons/actions/22',
             ['resource/icons/rqt_icons/actions/22/view-refresh.png',
              'resource/icons/rqt_icons/actions/22/call-start.png']),
         ('share/' + package_name + '/resource/icons/rqt_icons',
