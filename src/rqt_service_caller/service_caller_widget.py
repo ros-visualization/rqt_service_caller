@@ -74,6 +74,12 @@ class ServiceCallerWidget(QWidget):
 
         loadUi(ui_file, self, {'ExtendedComboBox': ExtendedComboBox})
 
+        icon_paths = QIcon.themeSearchPaths()
+        icon_paths.append(os.path.join(
+            package_path, 'share', pkg_name, 'resource', 'icons', 'rqt_icons'))
+        QIcon.setThemeSearchPaths(icon_paths)
+        QIcon.setThemeName('rqt_icons')
+
         self.refresh_services_button.setIcon(QIcon.fromTheme('view-refresh'))
         self.call_service_button.setIcon(QIcon.fromTheme('call-start'))
 
