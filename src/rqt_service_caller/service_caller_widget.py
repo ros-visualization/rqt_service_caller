@@ -49,7 +49,7 @@ from python_qt_binding.QtWidgets import QMenu, QTreeWidgetItem, QWidget
 import rclpy
 
 from rqt_py_common.extended_combo_box import ExtendedComboBox
-from rqt_py_common.message_helpers import get_service_class, get_message_class
+from rqt_py_common.message_helpers import get_service_class, get_message_class, SRV_MODE
 from rqt_py_common.topic_helpers import is_primitive_type, get_type_class
 
 class ServiceCallerWidget(QWidget):
@@ -116,12 +116,17 @@ class ServiceCallerWidget(QWidget):
             if len(service_types) > 1:
                 qWarning(
                     'ServiceCallerWidget.on_refresh_services_button_clicked():'
-                    'Topic {} has multiple services available: {}.'.format(
+                    'Service {} has multiple service types available: {}.'.format(
                         service_name, service_types))
                 qWarning(
                     'ServiceCallerWidget.on_refresh_services_button_clicked(): '
                     'using the first option {}'.format(service_types[0]))
 
+            # Skip service files that are not using the "Service mode",
+            # e.g. service types used to implement actions.
+            service_name_tokens = service_types[0].split('/')
+            if len(service_name_tokens) == 3 and service_name_tokens[1] != SRV_MODE:
+                continue
             service_class = get_service_class(service_types[0])
             if service_class is None:
                 qWarning(
