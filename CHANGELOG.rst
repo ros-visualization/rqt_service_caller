@@ -2,6 +2,14 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#18 <https://github.com/ros-visualization/rqt_service_caller/issues/18>`_ from ros-visualization/sloretz-update-maintainer
+  Update maintainer in package.xml
+* Update maintainer in package.xml
+* fix shebang line for python3 (`#16 <https://github.com/ros-visualization/rqt_service_caller/issues/16>`_)
+* Contributors: Michael Carroll, Mikael Arguedas, Shane Loretz
+
 0.4.9 (2020-03-11)
 ------------------
 * bump CMake minimum version to avoid CMP0048 warning
