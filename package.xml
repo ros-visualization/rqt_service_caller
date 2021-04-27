@@ -1,6 +1,6 @@
 <package format="3">
   <name>rqt_service_caller</name>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <description>rqt_service_caller provides a GUI plugin for calling arbitrary services.</description>
   <maintainer email="dthomas@osrfoundation.org">Dirk Thomas</maintainer>
   <maintainer email="mikeblautman@gmail.com">Mike Lautman</maintainer>
