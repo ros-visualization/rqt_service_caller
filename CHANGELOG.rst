@@ -2,6 +2,12 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Changed the build type to ament_python and fixed package to run with ros2 run (`#13 <https://github.com/ros-visualization/rqt_service_caller/issues/13>`_)
+* ignore services that don't use the SRV_MODE ('srv') (`#20 <https://github.com/ros-visualization/rqt_service_caller/issues/20>`_)
+* Contributors: Alejandro Hernández Cordero, William Woodall
+
 1.0.1 (2018-12-12)
 ------------------
 * fix CMake logic (`#8 <https://github.com/ros-visualization/rqt_service_caller/issues/8>`_)
