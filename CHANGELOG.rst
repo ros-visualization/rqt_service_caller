@@ -2,6 +2,9 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.0 (2022-05-10)
+------------------
+
 1.0.5 (2021-08-31)
 ------------------
 * Fix modern setuptools warning about dashes instead of underscores (`#21 <https://github.com/ros-visualization/rqt_service_caller/issues/21>`_)
