@@ -2,6 +2,11 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [rolling] Update maintainers - 2022-11-07 (`#25 <https://github.com/ros-visualization/rqt_service_caller/issues/25>`_)
+* Contributors: Audrow Nash, Jacob Perron
+
 1.1.0 (2022-05-10)
 ------------------
 
