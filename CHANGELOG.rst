@@ -2,6 +2,9 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.1.1 (2023-02-14)
 ------------------
 * [rolling] Update maintainers - 2022-11-07 (`#25 <https://github.com/ros-visualization/rqt_service_caller/issues/25>`_)
