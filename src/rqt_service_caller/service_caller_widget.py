@@ -48,6 +48,39 @@ import rosservice
 
 from rqt_py_common.extended_combo_box import ExtendedComboBox
 
+# https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary
+class Map(dict):
+    """
+    Example:
+    m = Map({'first_name': 'Eduardo'}, last_name='Pool', age=24, sports=['Soccer'])
+    """
+    def __init__(self, *args, **kwargs):
+        super(Map, self).__init__(*args, **kwargs)
+        for arg in args:
+            if isinstance(arg, dict):
+                for k, v in arg.items():
+                    self[k] = v
+
+        if kwargs:
+            for k, v in kwargs.items():
+                self[k] = v
+
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+    def __setattr__(self, key, value):
+        self.__setitem__(key, value)
+
+    def __setitem__(self, key, value):
+        super(Map, self).__setitem__(key, value)
+        self.__dict__.update({key: value})
+
+    def __delattr__(self, item):
+        self.__delitem__(item)
+
+    def __delitem__(self, key):
+        super(Map, self).__delitem__(key)
+        del self.__dict__[key]
 
 class ServiceCallerWidget(QWidget):
     column_names = ['service', 'type', 'expression']
@@ -207,15 +240,6 @@ class ServiceCallerWidget(QWidget):
         for slot_name in message.__slots__:
             slot_key = topic_name + '/' + slot_name
 
-            # if no expression exists for this slot_key, continue with it's child slots
-            if slot_key not in expressions:
-                self.fill_message_slots(getattr(message, slot_name), slot_key, expressions, counter)
-                continue
-
-            expression = expressions[slot_key]
-            if len(expression) == 0:
-                continue
-
             # get slot type
             slot = getattr(message, slot_name)
             if hasattr(slot, '_type'):
@@ -223,10 +247,37 @@ class ServiceCallerWidget(QWidget):
             else:
                 slot_type = type(slot)
 
+            # handle elements of list/tuple types
+            if slot_type in (list, tuple) and (len(slot) > 0) and hasattr(slot[0], '__slots__'):
+                for index in range(0, len(slot)):
+                    array_slot_key = slot_key + "[" + str(index) + "]"
+                    self.fill_message_slots(slot[index], array_slot_key, expressions, counter)
+                continue
+            elif slot_key not in expressions:
+                # if no expression exists for this slot_key, continue with its child slots
+                self.fill_message_slots(getattr(message, slot_name), slot_key, expressions, counter)
+                continue
+
+            expression = expressions[slot_key]
+            if len(expression) == 0:
+                continue
+
             self._eval_locals['i'] = counter
             value = self._evaluate_expression(expression, slot_type)
             if value is not None:
-                setattr(message, slot_name, value)
+                if type(value) in (list, tuple) and (len(value) > 0) and (type(value[0]) is dict):
+                    # array of dicts, required when filling a dynamically sized array, must be converted to
+                    # a special dict, which implements access by dot (e.g. MyDict.value), or else serialisation
+                    # will raise "dict has no attribute ..." exception
+
+                    # This implementation is not able to fill in members of a message, the user didn't specify.
+                    # If one or more is missing, the previously mentioned error is raised again
+                    modified_value = []
+                    for elem in value:
+                        modified_value.append(Map(elem))
+                    setattr(message, slot_name, modified_value)
+                else:
+                    setattr(message, slot_name, value)
 
     def _evaluate_expression(self, expression, slot_type):
         successful_eval = True
