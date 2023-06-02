@@ -432,8 +432,4 @@ class ServiceCallerWidget(QWidget):
             return {field: self._format_fields(getattr(request_component, field), field) for field in fields}
         else:
             return request_component
-
-
-
-
     
