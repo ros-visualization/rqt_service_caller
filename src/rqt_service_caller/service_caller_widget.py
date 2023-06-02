@@ -359,6 +359,7 @@ class ServiceCallerWidget(QWidget):
         self.fill_message_slots(
             request, self._service_info['service_name'], self._service_info['expressions'],
             self._service_info['counter'])
+        print(self._cmd_format_service(request))
         cli = self._node.create_client(
             self._service_info['service_class'],  self._service_info['service_name'])
 
@@ -418,3 +419,17 @@ class ServiceCallerWidget(QWidget):
                 for index in range(item.childCount()):
                     recursive_set_expanded(item.child(index))
             recursive_set_expanded(item)
+
+    def _cmd_format_service(self, request):
+        s_name = self._service_info["service_name"]
+        s_type = self._service_info["service_class_name"]
+        service_call = self._format_fields(request)
+        return f"ros2 service call {s_name} {s_type} \"{service_call}\""
+        
+    def _format_fields(self, request_component, field_name=None):
+        if hasattr(request_component, "get_fields_and_field_types"):
+            fields = request_component.get_fields_and_field_types()
+            return {field: self._format_fields(getattr(request_component, field), field) for field in fields}
+        else:
+            return request_component
+    
