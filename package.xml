@@ -19,6 +19,8 @@
   <exec_depend>rqt_gui_py</exec_depend>
   <exec_depend>rqt_py_common</exec_depend>
 
+  <test_depend>python3-pytest</test_depend>
+
   <export>
     <architecture_independent/>
     <rqt_gui plugin="${prefix}/plugin.xml"/>
