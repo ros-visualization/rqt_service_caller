@@ -31,6 +31,7 @@ setup(
         'rqt_service_caller provides a GUI plugin for calling arbitrary services.'
     ),
     license='BSD',
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'rqt_service_caller = ' + package_name + '.main:main',
