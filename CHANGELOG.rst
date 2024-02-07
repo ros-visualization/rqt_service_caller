@@ -2,8 +2,8 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.2.1 (2024-02-07)
+------------------
 * Add in a pytest test dependency. (`#28 <https://github.com/ros-visualization/rqt_service_caller/issues/28>`_)
 * Contributors: Chris Lalancette
 
