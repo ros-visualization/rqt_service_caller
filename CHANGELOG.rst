@@ -2,6 +2,12 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update rqt_service_caller to our standard policies. (`#31 <https://github.com/ros-visualization/rqt_service_caller/issues/31>`_)
+* Remove CODEOWNERS (`#29 <https://github.com/ros-visualization/rqt_service_caller/issues/29>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 1.3.0 (2024-04-26)
 ------------------
 
