@@ -2,8 +2,8 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.11 (2025-04-10)
+-------------------
 * Import setup from setuptools instead of distutils.core (`#26 <https://github.com/ros-visualization/rqt_service_caller/issues/26>`_)
 * Contributors: Arne Hitzmann
 
