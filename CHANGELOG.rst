@@ -2,6 +2,11 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Import setup from setuptools instead of distutils.core (`#26 <https://github.com/ros-visualization/rqt_service_caller/issues/26>`_)
+* Contributors: Arne Hitzmann
+
 0.4.10 (2021-04-21)
 -------------------
 * Merge pull request `#18 <https://github.com/ros-visualization/rqt_service_caller/issues/18>`_ from ros-visualization/sloretz-update-maintainer
