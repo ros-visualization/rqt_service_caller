@@ -2,8 +2,8 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.12 (2025-04-26)
+-------------------
 * Bump cmake_minimum_required to avoid deprecation (`#32 <https://github.com/ros-visualization/rqt_service_caller/issues/32>`_)
 * Contributors: Arne Hitzmann
 
