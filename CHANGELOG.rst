@@ -2,6 +2,9 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.5.0 (2025-04-28)
+------------------
+
 1.4.0 (2025-02-02)
 ------------------
 * Update rqt_service_caller to our standard policies. (`#31 <https://github.com/ros-visualization/rqt_service_caller/issues/31>`_)
