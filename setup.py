@@ -23,7 +23,6 @@ setup(
     keywords=['ROS'],
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
@@ -31,6 +30,14 @@ setup(
         'rqt_service_caller provides a GUI plugin for calling arbitrary services.'
     ),
     license='BSD',
+<<<<<<< HEAD
+=======
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
+>>>>>>> 4f02b44 (fix setuptools deprecations (#33))
     entry_points={
         'console_scripts': [
             'rqt_service_caller = ' + package_name + '.main:main',
