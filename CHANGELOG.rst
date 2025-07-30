@@ -2,6 +2,11 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecations (`#33 <https://github.com/ros-visualization/rqt_service_caller/issues/33>`_)
+* Contributors: mosfet80
+
 1.5.0 (2025-04-28)
 ------------------
 
