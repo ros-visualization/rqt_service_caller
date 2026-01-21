@@ -2,6 +2,17 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecations (backport `#33 <https://github.com/ros-visualization/rqt_service_caller/issues/33>`_) (`#35 <https://github.com/ros-visualization/rqt_service_caller/issues/35>`_)
+  fix setuptools deprecations (`#33 <https://github.com/ros-visualization/rqt_service_caller/issues/33>`_)
+  (cherry picked from commit 4f02b443f773c75ed2e29e4249b028c870e655e0)
+  Co-authored-by: mosfet80 <10235105+mosfet80@users.noreply.github.com>
+* Remove CODEOWNERS (backport `#29 <https://github.com/ros-visualization/rqt_service_caller/issues/29>`_) (`#30 <https://github.com/ros-visualization/rqt_service_caller/issues/30>`_)
+  <hr>This is an automatic backport of pull request `#29 <https://github.com/ros-visualization/rqt_service_caller/issues/29>`_ done by
+  [Mergify](https://mergify.com).
+* Contributors: mergify[bot]
+
 1.2.1 (2024-02-07)
 ------------------
 * Add in a pytest test dependency. (`#28 <https://github.com/ros-visualization/rqt_service_caller/issues/28>`_)
