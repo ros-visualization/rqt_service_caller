@@ -90,18 +90,20 @@ class ServiceCallerWidget(QWidget):
         current_service_name = instance_settings.value('current_service_name', None)
         if current_service_name:
             current_service_index = self.service_combo_box.findData(
-                current_service_name, Qt.DisplayRole)
+                current_service_name, Qt.ItemDataRole.DisplayRole)
             if current_service_index != -1:
                 self.service_combo_box.setCurrentIndex(current_service_index)
 
-        if int(instance_settings.value('splitter_orientation', Qt.Vertical)) == int(Qt.Vertical):
-            self.splitter.setOrientation(Qt.Vertical)
+        if instance_settings.value('splitter_orientation', Qt.Orientation.Vertical) == \
+                Qt.Orientation.Vertical:
+            self.splitter.setOrientation(Qt.Orientation.Vertical)
         else:
-            self.splitter.setOrientation(Qt.Horizontal)
+            self.splitter.setOrientation(Qt.Orientation.Horizontal)
 
     def trigger_configuration(self):
         new_orientation = \
-            Qt.Vertical if self.splitter.orientation() == Qt.Horizontal else Qt.Horizontal
+            Qt.Orientation.Vertical if self.splitter.orientation() == \
+            Qt.Orientation.Horizontal else Qt.Orientation.Horizontal
         self.splitter.setOrientation(new_orientation)
 
     @Slot()
@@ -136,9 +138,10 @@ class ServiceCallerWidget(QWidget):
         self.service_combo_box.addItems(sorted(self._services.keys()))
 
     @Slot(str)
-    def on_service_combo_box_currentIndexChanged(self, service_name):
+    def on_service_combo_box_currentTextChanged(self, service_name):
         self.request_tree_widget.clear()
         self.response_tree_widget.clear()
+        print('service_name', service_name)
         service_name = str(service_name)
         if not service_name:
             return
@@ -172,9 +175,9 @@ class ServiceCallerWidget(QWidget):
             self, parent, topic_name, type_name, message, is_editable=True):
         item = QTreeWidgetItem(parent)
         if is_editable:
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable)
         else:
-            item.setFlags(item.flags() & (~Qt.ItemIsEditable))
+            item.setFlags(item.flags() & (~Qt.ItemFlag.ItemIsEditable))
 
         if parent is None:
             # show full topic name with preceding namespace on toplevel item
@@ -185,7 +188,7 @@ class ServiceCallerWidget(QWidget):
         item.setText(self._column_index['service'], topic_text)
         item.setText(self._column_index['type'], type_name)
 
-        item.setData(0, Qt.UserRole, topic_name)
+        item.setData(0, Qt.ItemDataRole.UserRole, topic_name)
 
         if hasattr(message, 'get_fields_and_field_types'):
             for slot_name, type_name in message.get_fields_and_field_types().items():
@@ -214,7 +217,7 @@ class ServiceCallerWidget(QWidget):
         #   (column_name, new_value))
 
         if column_name == 'expression':
-            topic_name = str(item.data(0, Qt.UserRole))
+            topic_name = str(item.data(0, Qt.ItemDataRole.UserRole))
             if len(new_value):
                 self._service_info['expressions'][topic_name] = new_value
             elif topic_name in self._service_info['expressions']:
