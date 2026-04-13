@@ -2,6 +2,11 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.4.1 (2026-04-13)
+------------------
+* fix setuptools deprecations (backport `#33 <https://github.com/ros-visualization/rqt_service_caller/issues/33>`_) (`#34 <https://github.com/ros-visualization/rqt_service_caller/issues/34>`_)
+* Contributors: mergify[bot]
+
 1.4.0 (2025-02-02)
 ------------------
 * Update rqt_service_caller to our standard policies. (`#31 <https://github.com/ros-visualization/rqt_service_caller/issues/31>`_)
