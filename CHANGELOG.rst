@@ -2,6 +2,11 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.5.2 (2026-04-13)
+------------------
+* Support Qt6 (`#38 <https://github.com/ros-visualization/rqt_service_caller/issues/38>`_)
+* Contributors: Alejandro Hernández Cordero
+
 1.5.1 (2025-07-30)
 ------------------
 * fix setuptools deprecations (`#33 <https://github.com/ros-visualization/rqt_service_caller/issues/33>`_)
