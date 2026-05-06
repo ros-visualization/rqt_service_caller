@@ -2,6 +2,9 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2026-05-06)
+------------------
+
 1.5.2 (2026-04-13)
 ------------------
 * Support Qt6 (`#38 <https://github.com/ros-visualization/rqt_service_caller/issues/38>`_)
