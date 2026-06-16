@@ -141,7 +141,6 @@ class ServiceCallerWidget(QWidget):
     def on_service_combo_box_currentTextChanged(self, service_name):
         self.request_tree_widget.clear()
         self.response_tree_widget.clear()
-        print('service_name', service_name)
         service_name = str(service_name)
         if not service_name:
             return
@@ -362,26 +361,29 @@ class ServiceCallerWidget(QWidget):
         cli = self._node.create_client(
             self._service_info['service_class'],  self._service_info['service_name'])
 
-        future = cli.call_async(request)
-        while rclpy.ok() and not future.done():
-            pass
+        try:
+            future = cli.call_async(request)
+            while rclpy.ok() and not future.done():
+                # the node is spun by the rqt executor; sleep to avoid pinning the CPU
+                time.sleep(0.01)
 
-        if future.result() is not None:
-            response = future.result()
-            top_level_item = self._recursive_create_widget_items(
-                None, '/', self._service_info['service_class_name'] + '.Response',
-                response, is_editable=False)
-        else:
-            qWarning('ServiceCaller.on_call_service_button_clicked(): request:\n%r' % (request))
-            qWarning(
-                'ServiceCaller.on_call_service_button_clicked(): error calling service "%s".' %
-                (self._service_info['service_name']))
-            top_level_item = QTreeWidgetItem()
-            top_level_item.setText(self._column_index['service'], 'ERROR')
-            top_level_item.setText(self._column_index['type'], 'rospy.ServiceException')
-            top_level_item.setText(self._column_index['expression'], '')
-
-        self._node.destroy_client(cli)
+            if future.result() is not None:
+                response = future.result()
+                top_level_item = self._recursive_create_widget_items(
+                    None, '/', self._service_info['service_class_name'] + '.Response',
+                    response, is_editable=False)
+            else:
+                qWarning(
+                    'ServiceCaller.on_call_service_button_clicked(): request:\n%r' % (request))
+                qWarning(
+                    'ServiceCaller.on_call_service_button_clicked(): error calling service "%s".' %
+                    (self._service_info['service_name']))
+                top_level_item = QTreeWidgetItem()
+                top_level_item.setText(self._column_index['service'], 'ERROR')
+                top_level_item.setText(self._column_index['type'], 'rospy.ServiceException')
+                top_level_item.setText(self._column_index['expression'], '')
+        finally:
+            self._node.destroy_client(cli)
 
         self.response_tree_widget.addTopLevelItem(top_level_item)
         # resize columns
