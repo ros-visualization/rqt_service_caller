@@ -4,7 +4,7 @@ package_name = 'rqt_service_caller'
 
 setup(
     name=package_name,
-    version='1.5.2',
+    version='1.5.3',
     packages=[package_name],
     package_dir={'': 'src'},
     data_files=[
