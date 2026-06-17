@@ -2,6 +2,11 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.5.3 (2026-06-17)
+------------------
+* remove trace, leak and busy wait (backport `#39 <https://github.com/ros-visualization/rqt_service_caller/issues/39>`_) (`#41 <https://github.com/ros-visualization/rqt_service_caller/issues/41>`_)
+* Contributors: mergify[bot]
+
 1.5.2 (2026-04-13)
 ------------------
 * Support Qt6 (`#38 <https://github.com/ros-visualization/rqt_service_caller/issues/38>`_)
