@@ -52,7 +52,7 @@ class ServiceCallerWidget(QWidget):
     column_names = ['service', 'type', 'expression']
 
     def __init__(self, node):
-        super(ServiceCallerWidget, self).__init__()
+        super().__init__()
         self.setObjectName('ServiceCallerWidget')
         self._node = node
 
@@ -114,11 +114,11 @@ class ServiceCallerWidget(QWidget):
             if len(service_types) > 1:
                 qWarning(
                     'ServiceCallerWidget.on_refresh_services_button_clicked():'
-                    'Service {} has multiple service types available: {}.'.format(
-                        service_name, service_types))
+                    f'Service {service_name} has multiple service types available: '
+                    f'{service_types}.')
                 qWarning(
                     'ServiceCallerWidget.on_refresh_services_button_clicked(): '
-                    'using the first option {}'.format(service_types[0]))
+                    f'using the first option {service_types[0]}')
 
             # Skip service files that are not using the "Service mode",
             # e.g. service types used to implement actions.
@@ -150,8 +150,8 @@ class ServiceCallerWidget(QWidget):
         self._service_info['service_class_name'] = self._services[service_name]
 
         service_class = get_service_class(self._service_info['service_class_name'])
-        assert service_class, 'Could not find class {} for service: {}'.format(
-            self._services[service_name], service_name)
+        assert service_class, \
+            f'Could not find class {self._services[service_name]} for service: {service_name}'
 
         self._service_info['service_class'] = service_class
         self._service_info['expressions'] = {}
@@ -200,7 +200,7 @@ class ServiceCallerWidget(QWidget):
             type_name = type_name.split('[', 1)[0]
             for index, slot in enumerate(message):
                 self._recursive_create_widget_items(
-                    item, topic_name + '[%d]' % index, type_name, slot, is_editable)
+                    item, topic_name + f'[{index}]', type_name, slot, is_editable)
 
         else:
             item.setText(self._column_index['expression'], repr(message))
@@ -233,7 +233,7 @@ class ServiceCallerWidget(QWidget):
         #         message, topic_name, expressions, counter))
         if type(message) in (list, set):
             for i, msg in enumerate(message):
-                slot_key = topic_name + '[{}]'.format(i)
+                slot_key = topic_name + f'[{i}]'
                 if slot_key not in expressions:
                     self.fill_message_slots(msg, slot_key, expressions, counter)
                     continue
@@ -280,7 +280,7 @@ class ServiceCallerWidget(QWidget):
                         setattr(message, slot_name, value)
                     except AssertionError as e:
                         qWarning(
-                            'Failed to set {} to {}\n\t{}'.format(slot_name, value, e.__str__()))
+                            f'Failed to set {slot_name} to {value}\n\t{e.__str__()}')
 
     def _process_msg_expression(self, expression):
         """
@@ -296,8 +296,8 @@ class ServiceCallerWidget(QWidget):
                 self._eval_locals[tokens[0]] = module
             except ModuleNotFoundError:
                 qWarning(
-                    'ServiceCallerWidget._process_msg_expression failed to import: {}.'.format(
-                        tokens[0] + '.msg'))
+                    'ServiceCallerWidget._process_msg_expression failed to import: '
+                    f"{tokens[0] + '.msg'}.")
 
     def _evaluate_expression(self, expression, slot_type=None, is_array=False):
         successful_eval = True
@@ -339,8 +339,9 @@ class ServiceCallerWidget(QWidget):
                 'can not convert expression to slot type: %s -> %s' %
                 (type(value), slot_type))
         else:
-            qWarning('ServiceCaller._evaluate_expression(): failed to evaluate expression: %s' %
-                     (expression))
+            qWarning(
+                'ServiceCaller._evaluate_expression(): failed to evaluate expression: '
+                f'{expression}')
 
         return None
 
@@ -348,8 +349,9 @@ class ServiceCallerWidget(QWidget):
     def on_call_service_button_clicked(self):
         current_services = dict(self._node.get_service_names_and_types())
         if self._service_info['service_name'] not in current_services:
-            qWarning('Service "{}" is no longer available. Refresh the list of services'.format(
-                     self._service_info['service_name']))
+            qWarning(
+                f"Service \"{self._service_info['service_name']}\" is no longer available. "
+                'Refresh the list of services')
             return
 
         self.response_tree_widget.clear()
@@ -374,7 +376,7 @@ class ServiceCallerWidget(QWidget):
                     response, is_editable=False)
             else:
                 qWarning(
-                    'ServiceCaller.on_call_service_button_clicked(): request:\n%r' % (request))
+                    f'ServiceCaller.on_call_service_button_clicked(): request:\n{request!r}')
                 qWarning(
                     'ServiceCaller.on_call_service_button_clicked(): error calling service "%s".' %
                     (self._service_info['service_name']))
@@ -409,7 +411,7 @@ class ServiceCallerWidget(QWidget):
         menu = QMenu(self)
         action_item_expand = menu.addAction(QIcon.fromTheme('zoom-in'), 'Expand All Children')
         action_item_collapse = menu.addAction(QIcon.fromTheme('zoom-out'), 'Collapse All Children')
-        action = menu.exec_(global_pos)
+        action = menu.exec(global_pos)
 
         # evaluate user action
         if action in (action_item_expand, action_item_collapse):
