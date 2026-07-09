@@ -37,14 +37,14 @@ from rqt_service_caller.service_caller_widget import ServiceCallerWidget
 class ServiceCaller(Plugin):
 
     def __init__(self, context):
-        super(ServiceCaller, self).__init__(context)
+        super().__init__(context)
         self.setObjectName('ServiceCaller')
 
         assert hasattr(context, 'node'), 'Context does not have a node.'
         self._widget = ServiceCallerWidget(context.node)
         if context.serial_number() > 1:
             self._widget.setWindowTitle(
-                self._widget.windowTitle() + (' (%d)' % context.serial_number()))
+                self._widget.windowTitle() + f' ({context.serial_number()})')
         context.add_widget(self._widget)
 
     def save_settings(self, plugin_settings, instance_settings):
