@@ -2,6 +2,11 @@
 Changelog for package rqt_service_caller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.2 (2026-07-09)
+------------------
+* Python3 modernization (`#42 <https://github.com/ros-visualization/rqt_service_caller/issues/42>`_)
+* Contributors: Alejandro Hernández Cordero
+
 2.0.1 (2026-06-17)
 ------------------
 * remove trace, leak and busy wait (`#39 <https://github.com/ros-visualization/rqt_service_caller/issues/39>`_)
